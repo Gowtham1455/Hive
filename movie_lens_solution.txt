@@ -1,0 +1,24 @@
+create table if not exists movie_lens(movie_id int,title string,genres array<string>)
+row format delimited
+fields terminated by ','
+collection items terminated by '|'
+stored as textfile;
+----------
+load data local inpath 'hive/data/movie.csv'
+----------
+select explode(genres) as q from movie_lens;
+----------
+select movie_id,title, genres_c from movie_lens
+lateral view explode(genres) q1 as genres_c;
+----------
+create table if not exists movie_lens_sim(movie_id int,title string,genres string)
+row format delimited
+fields terminated by ','
+stored as textfile;
+----------
+insert into table movie_lens_sim
+select movie_id,title,genres_c from movie_lens
+lateral view explode(genres) q1 as genres_c;
+
+
+
