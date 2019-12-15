@@ -1,0 +1,51 @@
+# connect to hive
+hive --database gowthambabu82699
+
+# create query
+create table if not exists olympics (athelete_name string, age int, country string, year int, closing_date string, sport string,gold_medals_count int, silver_medals_count int,bronze_medals_count int, total_medals_count int)
+row format delimited
+fields terminated by '\t'
+lines terminated by '\n'
+stored as textfile;
+
+# check for metadata of query
+describe formatted olympics;
+
+# load data into table
+load data local inpath 'hive/data/olympic_data.csv' into table olympics;
+
+# check for data 
+select * from olympics;
+
+# drop table if any
+drop table olympics;
+
+1. Using the dataset list the total number of medals won by each country in swimming.
+select country, sum(total_medals_count)
+from olympics
+where upper(sport) = upper("swimming")
+group by country;
+
+2)Display real life number of medals India won year wise.
+select country,sum(total_medals_count),year
+from olympics
+where upper(country) =upper("india")
+group by country,year;
+
+3)Find the total number of medals each country won display the name along with total medals.
+select country,sum(total_medals_count)
+from olympics
+group by country
+order by country;
+
+4)Find the real life number of gold medals each country won.
+select country,sum(gold_medals_count)
+from olympics
+group by country;
+
+5)Which country got medals for Shooting, year wise classification?
+select country,sport,year
+from olympics
+where upper(sport) = upper("shooting")
+and total_medals_count > 0
+group by year,sport,country;
